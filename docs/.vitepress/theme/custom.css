@@ -1,0 +1,142 @@
+/* ========== 文章内容页样式覆盖 (4.2.4) ========== */
+
+/* ---- 代码块 ---- */
+.vp-doc div[class*='language-'] {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--vp-c-divider);
+    background: var(--vp-code-block-bg);
+    margin: 1.5rem 0;
+}
+
+/* 代码块顶部装饰条 + 语言标签 */
+.vp-doc div[class*='language-']::before {
+    content: attr(data-lang);
+    display: block;
+    padding: 6px 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--vp-c-text-2);
+    background: var(--vp-c-bg-soft);
+    border-bottom: 1px solid var(--vp-c-divider);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.vp-doc div[class*='language-'] pre {
+    margin: 0;
+    padding: 16px 20px;
+    background: transparent;
+}
+
+/* ---- 表格 ---- */
+.vp-doc table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--vp-c-divider);
+}
+
+.vp-doc th {
+    background: var(--vp-c-bg-soft);
+    font-weight: 600;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--vp-c-divider);
+}
+
+.vp-doc td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.vp-doc tr:last-child td {
+    border-bottom: none;
+}
+
+.vp-doc tr:hover td {
+    background: var(--vp-c-bg-soft);
+}
+
+/* ---- 引用块 ---- */
+.vp-doc blockquote {
+    border-left: 4px solid var(--vp-c-brand-1);
+    background: var(--vp-c-bg-soft);
+    padding: 12px 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: var(--vp-c-text-2);
+}
+
+/* ---- 提示块 (tip/info/warning/danger) ---- */
+.vp-doc .tip,
+.vp-doc .info,
+.vp-doc .warning,
+.vp-doc .danger {
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-left-width: 4px;
+    border-left-style: solid;
+}
+
+.vp-doc .tip {
+    background: rgba(52, 211, 153, 0.08);
+    border-color: #34d399;
+}
+
+.vp-doc .info {
+    background: rgba(96, 165, 250, 0.08);
+    border-color: #60a5fa;
+}
+
+.vp-doc .warning {
+    background: rgba(251, 191, 36, 0.08);
+    border-color: #fbbf24;
+}
+
+.vp-doc .danger {
+    background: rgba(248, 113, 113, 0.08);
+    border-color: #f87171;
+}
+
+/* ---- 标题锚点 ---- */
+.vp-doc h1:hover .header-anchor,
+.vp-doc h2:hover .header-anchor,
+.vp-doc h3:hover .header-anchor,
+.vp-doc h4:hover .header-anchor {
+    opacity: 1;
+}
+
+.vp-doc .header-anchor {
+    opacity: 0;
+    transition: opacity 0.2s;
+    margin-left: -1em;
+    padding-right: 0.25em;
+    color: var(--vp-c-brand-1);
+}
+
+/* ---- 图片 ---- */
+.vp-doc img {
+    border-radius: 10px;
+    max-width: 100%;
+    height: auto;
+}
+
+/* ---- 水平线 ---- */
+.vp-doc hr {
+    border: none;
+    border-top: 1px solid var(--vp-c-divider);
+    margin: 2rem 0;
+}
+
+/* ---- 内联代码 ---- */
+.vp-doc :not(pre)>code {
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--vp-c-bg-mute);
+    font-size: 0.875em;
+    color: var(--vp-c-brand-1);
+}
