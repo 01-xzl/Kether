@@ -2,6 +2,7 @@
   "name": "project001_ideas",
   "version": "1.0.0",
   "description": "基于 VitePress 构建的个人博客",
+  "type": "module",
   "private": true,
   "scripts": {
     "docs:dev": "vitepress dev docs",
