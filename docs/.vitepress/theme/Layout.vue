@@ -5,9 +5,17 @@ import NavBar from './components/NavBar.vue'
 import Banner from './components/Banner.vue'
 import AppFooter from './components/AppFooter.vue'
 import BackToTop from './components/BackToTop.vue'
+import Comments from './components/Comments.vue'
+import { computed } from 'vue'
 
 const { page, frontmatter } = useData()
 const { Layout: DefaultLayout } = DefaultTheme
+
+const isPost = computed(() => {
+  const url = page.value.url
+  if (!url) return false
+  return url.startsWith('/posts/') && url !== '/posts/'
+})
 </script>
 
 <template>
@@ -17,6 +25,7 @@ const { Layout: DefaultLayout } = DefaultTheme
     <main class="main-content">
       <div class="content-wrapper">
         <DefaultLayout />
+        <Comments v-if="isPost" />
       </div>
     </main>
     <AppFooter />
