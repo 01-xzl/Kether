@@ -1,3 +1,33 @@
+/* ========== 主题切换变量系统 (5.1) ========== */
+
+/* 暗色主题 CSS 变量覆盖 */
+html[data-theme="dark"] {
+    --vp-c-bg: #1a1a2e;
+    --vp-c-bg-soft: #16213e;
+    --vp-c-bg-mute: #0f3460;
+    --vp-c-bg-raw: 26 26 46;
+
+    --vp-c-text-1: #e8e8e8;
+    --vp-c-text-2: #a0a0b0;
+    --vp-c-text-3: #707088;
+
+    --vp-c-brand-1: #6c63ff;
+    --vp-c-brand-2: #5a52d5;
+    --vp-c-brand-3: #4840aa;
+
+    --vp-c-divider: rgba(255, 255, 255, 0.08);
+
+    --vp-code-block-bg: #0d1117;
+}
+
+/* 主题切换过渡动画（除首次加载外） */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
 /* ========== 文章内容页样式覆盖 (4.2.4) ========== */
 
 /* ---- 代码块 ---- */

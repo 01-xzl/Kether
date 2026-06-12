@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useData, useRouter } from 'vitepress'
+import ThemeSwitch from './ThemeSwitch.vue'
 
 const { site, theme } = useData()
 const router = useRouter()
@@ -43,6 +44,9 @@ onUnmounted(() => {
         <a class="nav-link" href="/" @click="closeMobile">首页</a>
         <a class="nav-link" href="/posts/" @click="closeMobile">文章</a>
         <a class="nav-link" href="/tags/" @click="closeMobile">标签</a>
+        <div class="nav-theme" @click.stop>
+          <ThemeSwitch />
+        </div>
         <div class="nav-search" @click="closeMobile">
           <button class="search-btn" onclick="document.querySelector('.VPNavBarSearch')?.querySelector('button')?.click()" title="搜索">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>

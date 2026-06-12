@@ -10,6 +10,24 @@ export default defineConfig({
     // 如果部署到子路径（username.github.io/repo/），改为 '/repo/'
     base: '/',
 
+    // 防闪烁内联脚本 — 在页面渲染前预检测主题
+    head: [
+        ['script', {}, `
+        (function() {
+          var stored = localStorage.getItem('theme-mode');
+          if (stored === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+          } else if (stored === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            // 跟随系统
+            var mq = window.matchMedia('(prefers-color-scheme: dark)');
+            document.documentElement.setAttribute('data-theme', mq.matches ? 'dark' : 'light');
+          }
+        })();
+      `]
+    ],
+
     themeConfig: {
         // 搜索功能 - VitePress 1.x 内置本地搜索
         search: {
