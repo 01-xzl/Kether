@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useData, useRouter } from 'vitepress'
+import { useData, useRouter, withBase } from 'vitepress'
 import ThemeSwitch from './ThemeSwitch.vue'
 
 const { site, theme } = useData()
@@ -31,7 +31,7 @@ onUnmounted(() => {
 <template>
   <header class="navbar" :class="{ scrolled }">
     <div class="navbar-inner">
-      <a class="navbar-logo" href="/" @click="closeMobile">
+      <a class="navbar-logo" :href="withBase('/')" @click="closeMobile">
         <span class="logo-icon">✦</span>
         <span class="logo-text">{{ site.title }}</span>
       </a>
@@ -41,9 +41,9 @@ onUnmounted(() => {
       </button>
 
       <nav class="nav-menu" :class="{ open: mobileOpen }">
-        <a class="nav-link" href="/" @click="closeMobile">首页</a>
-        <a class="nav-link" href="/posts/" @click="closeMobile">文章</a>
-        <a class="nav-link" href="/tags/" @click="closeMobile">标签</a>
+        <a class="nav-link" :href="withBase('/')" @click="closeMobile">首页</a>
+        <a class="nav-link" :href="withBase('/posts/')" @click="closeMobile">文章</a>
+        <a class="nav-link" :href="withBase('/tags/')" @click="closeMobile">标签</a>
         <div class="nav-theme" @click.stop>
           <ThemeSwitch />
         </div>
