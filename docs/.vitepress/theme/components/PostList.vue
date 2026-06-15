@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { withBase } from 'vitepress'
 import { data as posts } from '../../../posts/posts.data'
 import type { Post } from '../../../posts/posts.data'
 
@@ -66,7 +67,7 @@ function formatDate(dateStr: string): string {
       <div class="post-card-bar"></div>
       <div class="post-card-body">
         <h2 class="post-card-title">
-          <a :href="post.url">
+          <a :href="withBase(post.url)">
             <span v-if="post.pinned" class="post-pinned" title="置顶">📌</span>
             {{ post.title }}
           </a>
@@ -79,7 +80,7 @@ function formatDate(dateStr: string): string {
           <a
             v-for="tag in post.tags"
             :key="tag"
-            :href="`/tags/#${encodeURIComponent(tag)}`"
+            :href="withBase(`/tags/#${encodeURIComponent(tag)}`)"
             class="post-tag"
           >#{{ tag }}</a>
         </div>

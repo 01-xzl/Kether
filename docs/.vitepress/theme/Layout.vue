@@ -33,15 +33,7 @@ const isPost = computed(() => {
   </div>
 </template>
 
-<style>
-/* Reset VitePress default nav and footer since we replace them */
-.custom-layout :deep(.VPNav) {
-  display: none !important;
-}
-.custom-layout :deep(.VPFooter) {
-  display: none !important;
-}
-
+<style scoped>
 .main-content {
   min-height: 60vh;
 }
@@ -56,5 +48,15 @@ const isPost = computed(() => {
   .content-wrapper {
     padding: 0 16px;
   }
+}
+</style>
+
+<style>
+/* Reset VitePress default nav and footer since we replace them */
+.custom-layout .VPNav {
+  display: none !important;
+}
+.custom-layout .VPFooter {
+  display: none !important;
 }
 </style>
