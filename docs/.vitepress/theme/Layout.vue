@@ -14,9 +14,9 @@ const { page, frontmatter } = useData()
 const { Layout: DefaultLayout } = DefaultTheme
 
 const isPost = computed(() => {
-  const url = page.value.url
-  if (!url) return false
-  return url.startsWith('/posts/') && url !== '/posts/'
+  const path = page.value.relativePath
+  if (!path) return false
+  return path.startsWith('posts/') && path !== 'posts/index.md'
 })
 
 // ---- Splash 加载动画 ----
