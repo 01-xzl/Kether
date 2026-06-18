@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { withBase } from 'vitepress'
 import { data as posts } from '../../../posts/posts.data'
 
 interface TagInfo {
@@ -65,7 +66,7 @@ const filteredPosts = computed(() => {
       <h3>#{{ selectedTag }} 相关文章</h3>
       <ul>
         <li v-for="post in filteredPosts" :key="post.url">
-          <a :href="post.url">{{ post.title }}</a>
+          <a :href="withBase(post.url)">{{ post.title }}</a>
           <span class="post-date">{{ post.date }}</span>
         </li>
       </ul>

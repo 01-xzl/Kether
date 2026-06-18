@@ -1,114 +1,86 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { onMounted, watch, nextTick } from 'vue'
 import { useData } from 'vitepress'
 
-// ===== 配置区域 — 使用前请修改为你的 Gitalk 配置 =====
-const GITALK_CONFIG = {
-  clientID: 'YOUR_GITHUB_CLIENT_ID',       // 替换为你的 GitHub OAuth App Client ID
-  clientSecret: 'YOUR_GITHUB_CLIENT_SECRET', // 替换为你的 GitHub OAuth App Client Secret
-  repo: 'YOUR_REPO_NAME',                   // 替换为仓库名
-  owner: 'YOUR_GITHUB_USERNAME',            // 替换为 GitHub 用户名
-  admin: ['YOUR_GITHUB_USERNAME'],          // 管理员用户名列表
+// ===== giscus 配置 =====
+const GISCUS_CONFIG = {
+  repo: '01-xzl/Kether' as `${string}/${string}`,
+  repoId: 'R_kgDOS2g5XQ',
+  category: 'Announcements',
+  categoryId: 'DIC_kwDOS2g5Xc4C_Bkh',
+  mapping: 'pathname' as const,
+  strict: '0',
+  reactionsEnabled: '1',
+  emitMetadata: '0',
+  inputPosition: 'top' as const,
+  lang: 'zh-CN',
+  loading: 'lazy' as const,
 }
 
-const { page, frontmatter } = useData()
-const containerRef = ref<HTMLDivElement | null>(null)
-const loaded = ref(false)
+const { page } = useData()
 
-function getTheme() {
+function getGiscusTheme(): string {
   if (typeof window === 'undefined') return 'light'
   const attr = document.documentElement.getAttribute('data-theme')
-  return attr === 'dark' ? 'dark' : 'light'
+  // transparent_dark: 透明背景暗色 → 与网站毛玻璃风格融合
+  return attr === 'dark' ? 'transparent_dark' : 'light'
 }
 
-async function loadGitalk() {
-  if (loaded.value || typeof window === 'undefined') return
-  if (!containerRef.value) return
+function loadGiscus() {
+  if (typeof window === 'undefined') return
+  // 防止重复加载
+  if (document.querySelector('iframe.giscus-frame')) return
 
-  // Check if credentials are configured
-  if (GITALK_CONFIG.clientID.startsWith('YOUR_')) {
-    containerRef.value.innerHTML = `<div class="gitalk-placeholder">
-      <p>💬 评论系统尚未配置</p>
-      <p>请在 <code>docs/.vitepress/theme/components/Comments.vue</code></p>
-      <p>中修改 <code>GITALK_CONFIG</code> 为你的 GitHub OAuth App 信息。</p>
-      <p><small>需要在 GitHub 创建一个 <a href="https://github.com/settings/applications/new" target="_blank">OAuth App</a></small></p>
-    </div>`
-    return
-  }
-
-  try {
-    // Dynamically load Gitalk
-    await loadCSS('https://unpkg.com/gitalk/dist/gitalk.css')
-    await loadScript('https://unpkg.com/gitalk/dist/gitalk.min.js')
-
-    const id = window.location.pathname.replace(/\/$/, '') || '/'
-    const title = document.title || id
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Gitalk = (window as any).Gitalk
-    if (!Gitalk) return
-
-    const gitalk = new Gitalk({
-      ...GITALK_CONFIG,
-      id: id,
-      title: title,
-      distractionFreeMode: false,
-      language: 'zh-CN',
-    })
-
-    gitalk.render(containerRef.value)
-    loaded.value = true
-  } catch (e) {
-    console.error('Failed to load Gitalk:', e)
-  }
+  const script = document.createElement('script')
+  script.src = 'https://giscus.app/client.js'
+  script.setAttribute('data-repo', GISCUS_CONFIG.repo)
+  script.setAttribute('data-repo-id', GISCUS_CONFIG.repoId)
+  script.setAttribute('data-category', GISCUS_CONFIG.category)
+  script.setAttribute('data-category-id', GISCUS_CONFIG.categoryId)
+  script.setAttribute('data-mapping', GISCUS_CONFIG.mapping)
+  script.setAttribute('data-strict', GISCUS_CONFIG.strict)
+  script.setAttribute('data-reactions-enabled', GISCUS_CONFIG.reactionsEnabled)
+  script.setAttribute('data-emit-metadata', GISCUS_CONFIG.emitMetadata)
+  script.setAttribute('data-input-position', GISCUS_CONFIG.inputPosition)
+  script.setAttribute('data-theme', getGiscusTheme())
+  script.setAttribute('data-lang', GISCUS_CONFIG.lang)
+  script.setAttribute('data-loading', GISCUS_CONFIG.loading)
+  script.setAttribute('crossorigin', 'anonymous')
+  script.async = true
+  document.getElementById('giscus-container')?.appendChild(script)
 }
 
-function loadCSS(url: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const link = document.createElement('link')
-    link.rel = 'stylesheet'
-    link.href = url
-    link.onload = () => resolve()
-    link.onerror = () => reject(new Error(`Failed to load CSS: ${url}`))
-    document.head.appendChild(link)
-  })
-}
-
-function loadScript(url: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script')
-    script.src = url
-    script.onload = () => resolve()
-    script.onerror = () => reject(new Error(`Failed to load script: ${url}`))
-    document.body.appendChild(script)
-  })
+function sendThemeToGiscus() {
+  const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
+  if (!iframe) return
+  iframe.contentWindow?.postMessage(
+    { giscus: { setConfig: { theme: getGiscusTheme() } } },
+    'https://giscus.app'
+  )
 }
 
 onMounted(() => {
-  nextTick(() => {
-    loadGitalk()
-  })
+  nextTick(() => loadGiscus())
 })
 
-// Watch for theme changes and update Gitalk
-watch(() => getTheme(), () => {
-  if (loaded.value) {
-    // Gitalk doesn't support runtime theme switching natively
-    // We use CSS overrides below instead
-  }
-})
+// 监听主题切换 → 通知 giscus iframe 同步
+watch(
+  () => {
+    if (typeof window === 'undefined') return 'light'
+    return document.documentElement.getAttribute('data-theme')
+  },
+  () => sendThemeToGiscus()
+)
 </script>
 
 <template>
   <div class="comments-section">
     <h2 class="comments-title">💬 评论</h2>
-    <div ref="containerRef" class="gitalk-container"></div>
+    <div id="giscus-container" class="giscus-container"></div>
   </div>
 </template>
 
-<style>
-/* ===== Gitalk 主题适配 ===== */
-
+<style scoped>
 .comments-section {
   margin-top: 3rem;
   padding-top: 2rem;
@@ -122,124 +94,9 @@ watch(() => getTheme(), () => {
   color: var(--vp-c-text-1);
 }
 
-/* Placeholder style */
-.gitalk-placeholder {
-  padding: 2rem;
-  text-align: center;
-  background: var(--vp-c-bg-soft);
-  border-radius: 12px;
-  color: var(--vp-c-text-2);
-  font-size: 0.95rem;
-  line-height: 2;
-}
-
-.gitalk-placeholder code {
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: var(--vp-c-bg-mute);
-  font-size: 0.85em;
-  color: var(--vp-c-brand-1);
-}
-
-.gitalk-placeholder a {
-  color: var(--vp-c-brand-1);
-  text-decoration: none;
-}
-
-.gitalk-placeholder a:hover {
-  text-decoration: underline;
-}
-
-.gitalk-container {
+.giscus-container {
   margin: 0 auto;
   max-width: 100%;
-}
-
-/* Gitalk dark theme overrides */
-html[data-theme="dark"] .gt-container {
-  color: var(--vp-c-text-1);
-}
-
-html[data-theme="dark"] .gt-container .gt-header-textarea,
-html[data-theme="dark"] .gt-container .gt-header-preview {
-  background: var(--vp-c-bg-soft) !important;
-  color: var(--vp-c-text-1) !important;
-  border-color: var(--vp-c-divider) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-header-textarea:focus {
-  background: var(--vp-c-bg) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-comment-content {
-  background: var(--vp-c-bg-soft) !important;
-  border-color: var(--vp-c-divider) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-comment-content:hover {
-  box-shadow: 0 0 8px rgba(108, 99, 255, 0.15) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-comment-body {
-  color: var(--vp-c-text-1) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-comment-username {
-  color: var(--vp-c-brand-1) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-comment-date {
-  color: var(--vp-c-text-3) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-comment-text {
-  color: var(--vp-c-text-1) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-btn {
-  background: var(--vp-c-bg-mute) !important;
-  border-color: var(--vp-c-divider) !important;
-  color: var(--vp-c-text-1) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-btn:hover {
-  background: var(--vp-c-bg-soft) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-btn-preview {
-  background: var(--vp-c-bg-soft) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-btn-public {
-  background: var(--vp-c-brand-1) !important;
-  border-color: var(--vp-c-brand-1) !important;
-  color: white !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-svg svg {
-  fill: var(--vp-c-text-2) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-popup {
-  background: var(--vp-c-bg) !important;
-  border-color: var(--vp-c-divider) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-popup .gt-action {
-  color: var(--vp-c-text-1) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-meta {
-  border-bottom-color: var(--vp-c-divider) !important;
-}
-
-html[data-theme="dark"] .gt-container a.is--active {
-  color: var(--vp-c-brand-1) !important;
-}
-
-html[data-theme="dark"] .gt-container .gt-comment-admin .gt-comment-content {
-  background: var(--vp-c-bg-mute) !important;
-  border-color: var(--vp-c-brand-3) !important;
+  min-height: 100px;
 }
 </style>

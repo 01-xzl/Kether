@@ -14,7 +14,7 @@ export default defineConfig({
   head: [
     ['script', {}, `
         (function() {
-          var stored = localStorage.getItem('theme-mode');
+          var stored = localStorage.getItem('blog-theme-mode');
           if (stored === 'light') {
             document.documentElement.setAttribute('data-theme', 'light');
           } else if (stored === 'dark') {

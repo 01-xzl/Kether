@@ -3,15 +3,19 @@ import { ref, onMounted, onUnmounted } from 'vue'
 
 const visible = ref(false)
 
-let scrollHandler: () => void
+let scrollHandler: (() => void) | undefined
+
 onMounted(() => {
   scrollHandler = () => {
     visible.value = window.scrollY > 400
   }
   window.addEventListener('scroll', scrollHandler, { passive: true })
 })
+
 onUnmounted(() => {
-  window.removeEventListener('scroll', scrollHandler)
+  if (scrollHandler) {
+    window.removeEventListener('scroll', scrollHandler)
+  }
 })
 
 function scrollToTop() {

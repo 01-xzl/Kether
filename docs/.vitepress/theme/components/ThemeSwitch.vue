@@ -8,7 +8,7 @@ const open = ref(false)
 
 function getStoredTheme(): ThemeMode {
   if (typeof window === 'undefined') return 'system'
-  const stored = localStorage.getItem('theme-mode')
+  const stored = localStorage.getItem('blog-theme-mode')
   if (stored === 'light' || stored === 'dark' || stored === 'system') return stored
   return 'system'
 }
@@ -28,7 +28,7 @@ function applyTheme(mode: ThemeMode) {
   }
 
   html.setAttribute('data-theme', resolved)
-  localStorage.setItem('theme-mode', mode)
+  localStorage.setItem('blog-theme-mode', mode)
 
   // Remove transition class after animation completes
   setTimeout(() => {
@@ -70,7 +70,14 @@ onMounted(() => {
 
 <template>
   <div class="theme-switch">
-    <button class="theme-btn" @click="toggleDropdown" :title="'主题: ' + current">
+    <button
+      class="theme-btn"
+      @click="toggleDropdown"
+      :title="'主题: ' + current"
+      :aria-label="'主题切换，当前：' + current"
+      :aria-expanded="open"
+      role="button"
+    >
       <!-- Sun icon -->
       <svg v-if="current === 'light'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/>
@@ -86,16 +93,16 @@ onMounted(() => {
     </button>
 
     <Transition name="dropdown">
-      <div v-if="open" class="theme-dropdown">
-        <button class="theme-option" :class="{ active: current === 'light' }" @click="setTheme('light')">
+      <div v-if="open" class="theme-dropdown" role="menu">
+        <button class="theme-option" :class="{ active: current === 'light' }" @click="setTheme('light')" role="menuitemradio" :aria-checked="current === 'light'">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <span>亮色</span>
         </button>
-        <button class="theme-option" :class="{ active: current === 'dark' }" @click="setTheme('dark')">
+        <button class="theme-option" :class="{ active: current === 'dark' }" @click="setTheme('dark')" role="menuitemradio" :aria-checked="current === 'dark'">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <span>暗色</span>
         </button>
-        <button class="theme-option" :class="{ active: current === 'system' }" @click="setTheme('system')">
+        <button class="theme-option" :class="{ active: current === 'system' }" @click="setTheme('system')" role="menuitemradio" :aria-checked="current === 'system'">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
           <span>跟随系统</span>
         </button>
